@@ -6,7 +6,6 @@ buildscript {
 
 plugins {
     id 'org.jetbrains.intellij' version '1.17.3'
-    id 'maven-publish'
     id 'signing'
     id 'antlr'
 }
