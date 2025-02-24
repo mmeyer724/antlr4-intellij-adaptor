@@ -6,7 +6,6 @@ buildscript {
 
 plugins {
     id 'org.jetbrains.intellij' version '1.17.3'
-    id 'signing'
     id 'antlr'
 }
 
@@ -56,64 +55,6 @@ task sourcesJar(type: Jar) {
 task javadocJar(type: Jar) {
     from javadoc
     archiveClassifier.set('javadoc')
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'org.antlr'
-            artifactId = 'antlr4-intellij-adaptor'
-            version = libraryVersion
-
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-
-            pom {
-                name = 'ANTLRV4 adaptor for IntelliJ-based IDEs'
-                description = 'Support for using ANTLR-generated parsers/lexers in IntelliJ-based IDE plug-ins.'
-                url = 'https://github.com/antlr/antlr4-intellij-adaptor'
-                licenses {
-                    license {
-                        name = 'BSD 2-Clause "Simplified" License'
-                        url = 'https://github.com/antlr/antlr4-intellij-adaptor/blob/master/LICENSE'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'parrt'
-                        name = 'Terence Parr'
-                        email = 'parrt@antlr.org'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git://github.com/antlr/antlr4-intellij-adaptor.git'
-                    developerConnection = 'scm:git:git@github.com:antlr/antlr4-intellij-adaptor.git'
-                    url = 'https://github.com/antlr/antlr4-intellij-adaptor'
-                }
-            }
-
-        }
-    }
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/${libraryVersion.contains("-SNAPSHOT") ? 'content/repositories/snapshots' : 'service/local/staging/deploy/maven2'}"
-            credentials {
-                username = findProperty("ossrhToken") as String
-                password = findProperty("ossrhTokenPassword") as String
-            }
-        }
-    }
-}
-
-signing {
-    afterEvaluate { project ->
-        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
-        def signingKey = findProperty("signingKey")
-        def signingPassword = findProperty("signingPassword")
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign publishing.publications.maven
-    }
 }
 
 javadoc {
